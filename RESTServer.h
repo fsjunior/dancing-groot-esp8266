@@ -32,7 +32,7 @@
 class RESTServer {
   private:
     ESP8266WebServer server;
-    std::function<void()> fn;
+    std::function<void()> shakeCallback;
 
     void replySuccess();
     void handlePing();

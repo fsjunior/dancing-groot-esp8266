@@ -29,9 +29,11 @@
 DancingController dancingController(D2);
 RESTServer restServer(80);
 
-void setup() {
+void setup() 
+{
   Serial.begin(115200);
-  
+
+  Wifi.begin("", ""); //change ssid and password here
   
   Serial.println("");
 
@@ -47,9 +49,9 @@ void setup() {
   restServer.onShake(std::bind(&DancingController::shake, &dancingController));
   
   restServer.begin();
-  
 }
 
-void loop() {
+void loop() 
+{
   restServer.handleClient();
 }

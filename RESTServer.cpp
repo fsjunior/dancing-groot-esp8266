@@ -27,7 +27,7 @@
 #include <functional>
 
 
-#define DATA_ARRAY_SIZE 256
+#define DATA_ARRAY_SIZE 64
 
 
 void RESTServer::replySuccess()
@@ -44,14 +44,13 @@ void RESTServer::replySuccess()
 
 void RESTServer::handlePing()
 {
-  Serial.println("Funcionou!");
   replySuccess();
 }
 
 void RESTServer::handleShake()
 {
-  if(fn)
-    fn();
+  if(shakeCallback)
+    shakeCallback();
   replySuccess();
 }
 
@@ -63,7 +62,7 @@ RESTServer::RESTServer(int port):server(port)
 
 void RESTServer::onShake(std::function<void()> fn)
 {
-  this->fn = fn;
+  shakeCallback = fn;
 }
 
 void RESTServer::begin()
