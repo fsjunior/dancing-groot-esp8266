@@ -22,14 +22,30 @@
  * 
  */
 
-#include <Servo.h>
+#include "DancingController.h"
+
+DancingController dancingController(D2);
 
 void setup() {
   // put your setup code here, to run once:
-
+  Serial.begin(115200);
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
-
+  char c;
+  if(Serial.available()) {
+    c = Serial.read();
+    switch(c) {
+      case 'd':
+        dancingController.dance();      
+      break;
+      case 'a':
+        dancingController.shake();
+       break;
+      case 's':
+        dancingController.stop();    
+      break;
+    }
+  }
 }
