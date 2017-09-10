@@ -1,4 +1,27 @@
-
+/*
+ *  This file is part of Dancing Groot Project
+ *  Copyright (c) 2017 Francisco de Souza Junior (chico.net.br).
+ *  
+ *  GROOT is trademark from Marvel Characters, Inc. and I use it here 
+ *  only for educational and hobbyist purposes, without any financial 
+ *  reward.
+ *
+ *  dancing-groot-esp8266 is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  dancing-groot-esp8266 is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with dancing-groot-esp8266.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * 
+ */
+ 
 #include "DancingController.h"
 
 
@@ -6,64 +29,18 @@
 #define MAX_DANCE_SERVO_MS 1500
 
 
-static inline int getTimeoutFromDanceStatus(DanceStatus danceStatus)
-{
-  return static_cast<int>(danceStatus);
-}
-
-
-
 DancingController::DancingController(int pin):pin(pin)
 {
-  //servo.attach(pin);  
-  this->stop();
+  servo.attach(pin);
 }
 
 
-void DancingController::stop()
-{
-  danceStatus = DanceStatus::stopped;
-  danceTicker.detach();
-  if(servo.attached())
-    servo.detach();
-}
-
-static void danceCallback(Servo *servo)
-{
-  //Servo *servo = static_cast<Servo *>(data);
-
-  if(servo->readMicroseconds() == MAX_DANCE_SERVO_MS) 
-    servo->write(MIN_DANCE_SERVO_MS);
-  else
-    servo->write(MAX_DANCE_SERVO_MS);
-  
-}
-
-void DancingController::start()
-{
-  if(!servo.attached()) {
-    servo.attach(pin);
-  }
-  
-  danceTicker.detach();
-  danceTicker.attach_ms(getTimeoutFromDanceStatus(danceStatus), danceCallback, &servo);
-
-
-  
-  //void attach_ms(uint32_t milliseconds, void (*callback)(TArg), TArg arg)
-  //typedef void (*callback_with_arg_t)(void*);
-}
-
-void DancingController::dance()
-{
-  danceStatus = DanceStatus::dancing;
-  start();
- 
-}
 void DancingController::shake()
 {
-  danceStatus = DanceStatus::shaking;
-  start();
+  if(servo.readMicroseconds() == MAX_DANCE_SERVO_MS)
+    servo.write(MIN_DANCE_SERVO_MS);
+  else
+    servo.write(MAX_DANCE_SERVO_MS);
 }
 
 

@@ -22,26 +22,33 @@
  * 
  */
  
-#ifndef _DANCING_CONTROLLER_H_
-#define _DANCING_CONTROLLER_H_
+#ifndef _REST_SERVER_H_
+#define _REST_SERVER_H_
 
-#include <Servo.h>
-#include <Ticker.h>
-
+#include <ESP8266WebServer.h>
 
 
-class DancingController {
+
+class RESTServer {
   private:
-    Servo servo;
-    int pin;
+    ESP8266WebServer server;
+    std::function<void()> fn;
+
+    void replySuccess();
+    void handlePing();
+    void handleShake();
+    
 
   public:
-    DancingController(int pin);
+    RESTServer(int port = 80);
 
-    void shake();
+    void onShake(std::function<void()> fn);
+
+    void begin();
+    void handleClient();
 };
 
 
 
 
-#endif /* _DANCING_CONTROLLER_H_ */
+#endif /* _REST_SERVER_H_ */

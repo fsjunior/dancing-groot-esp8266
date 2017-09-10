@@ -22,26 +22,57 @@
  * 
  */
  
-#ifndef _DANCING_CONTROLLER_H_
-#define _DANCING_CONTROLLER_H_
-
-#include <Servo.h>
-#include <Ticker.h>
+#include "RESTServer.h"
+#include <ArduinoJson.h>
+#include <functional>
 
 
-
-class DancingController {
-  private:
-    Servo servo;
-    int pin;
-
-  public:
-    DancingController(int pin);
-
-    void shake();
-};
+#define DATA_ARRAY_SIZE 256
 
 
+void RESTServer::replySuccess()
+{
+  StaticJsonBuffer<DATA_ARRAY_SIZE> actualBuffer;
+  JsonObject& root = actualBuffer.createObject();
+  root["Result"] = true;
+
+  String output;
+  root.printTo(output);
+  server.send ( 200, "application/json", output);  
+}
 
 
-#endif /* _DANCING_CONTROLLER_H_ */
+void RESTServer::handlePing()
+{
+  Serial.println("Funcionou!");
+  replySuccess();
+}
+
+void RESTServer::handleShake()
+{
+  if(fn)
+    fn();
+  replySuccess();
+}
+
+RESTServer::RESTServer(int port):server(port)
+{ 
+  server.on("/shake", HTTP_POST, std::bind(&RESTServer::handleShake, this));
+  server.on("/ping", HTTP_GET, std::bind(&RESTServer::handlePing, this));
+}
+
+void RESTServer::onShake(std::function<void()> fn)
+{
+  this->fn = fn;
+}
+
+void RESTServer::begin()
+{
+  server.begin();   
+}
+
+void RESTServer::handleClient()
+{
+  server.handleClient();
+}
+
