@@ -25,6 +25,7 @@
 #include "DancingController.h"
 #include <WiFiClient.h>
 #include "RESTServer.h"
+#include <ESP8266mDNS.h>
 
 DancingController dancingController(D2);
 RESTServer restServer(80);
@@ -33,7 +34,7 @@ void setup()
 {
   Serial.begin(115200);
 
-  Wifi.begin("", ""); //change ssid and password here
+  WiFi.begin("", ""); //change ssid and password here
   
   Serial.println("");
 
@@ -45,6 +46,11 @@ void setup()
   Serial.println("");
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
+
+  if (!MDNS.begin("groot")) {
+      Serial.println("Error setting up MDNS responder!");
+  }
+  
 
   restServer.onShake(std::bind(&DancingController::shake, &dancingController));
   
